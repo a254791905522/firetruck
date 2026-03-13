@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy – Fire Truck Rescue Sim Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #d8c4c0;
+            background: linear-gradient(180deg, #1a0a0a 0%, #2d1515 30%, #3d1a1a 60%, #1a0a0a 100%);
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 69, 0, 0.08) 0%, transparent 55%);
+        }
+
+        .stripes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.04;
+            background: repeating-linear-gradient(
+                -45deg,
+                #ff6b35,
+                #ff6b35 8px,
+                #1a0a0a 8px,
+                #1a0a0a 16px
+            );
+        }
+
+        .wrapper {
+            max-width: 780px;
+            margin: 0 auto;
+            background: linear-gradient(165deg, rgba(45, 20, 20, 0.96) 0%, rgba(26, 10, 10, 0.98) 100%);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            padding: 42px 40px;
+            border-radius: 22px;
+            border: 2px solid rgba(255, 69, 0, 0.22);
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45),
+                        0 0 0 1px rgba(255, 100, 50, 0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 69, 0, 0.2);
+        }
+
+        .top-bar .icon {
+            font-size: 38px;
+            line-height: 1;
+        }
+
+        .top-bar h1 {
+            font-family: 'Oswald', sans-serif;
+            color: #fff;
+            font-size: 1.85em;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .top-bar .app-tag {
+            color: #ff8a70;
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .meta {
+            color: #a08078;
+            font-size: 0.88em;
+            margin-bottom: 28px;
+        }
+
+        .block {
+            margin-bottom: 26px;
+        }
+
+        .block h2 {
+            font-family: 'Oswald', sans-serif;
+            color: #ff6b35;
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .block p {
+            margin: 8px 0;
+            color: #d8c4c0;
+            font-size: 0.98em;
+        }
+
+        .block ul {
+            margin: 10px 0;
+            padding-left: 22px;
+            list-style: none;
+        }
+
+        .block ul li {
+            position: relative;
+            padding-left: 18px;
+            margin: 6px 0;
+            color: #d8c4c0;
+            font-size: 0.98em;
+        }
+
+        .block ul li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        a {
+            color: #ff8a70;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: #ff6b35;
+        }
+
+        strong {
+            color: #ffe0d8;
+            font-weight: 700;
+        }
+
+        .notice-box {
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid rgba(255, 100, 50, 0.3);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+
+        .notice-box p {
+            margin: 4px 0;
+        }
+
+        .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            margin-top: 12px;
+        }
+
+        .contact-row span {
+            color: #a08078;
+        }
+
+        .contact-row a {
+            color: #ff8a70;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            margin-top: 30px;
+            color: #fff;
+            font-weight: 700;
+            padding: 12px 26px;
+            background: linear-gradient(145deg, #e63946 0%, #c41e3a 50%, #8B0000 100%);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 150, 150, 0.3);
+            transition: all 0.3s;
+            box-shadow: 0 6px 24px rgba(196, 30, 58, 0.35);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.4);
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .wrapper { padding: 30px 22px; border-radius: 18px; }
+            .top-bar { flex-wrap: wrap; }
+            .top-bar .app-tag { margin-left: 0; width: 100%; }
+            .top-bar h1 { font-size: 1.55em; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-overlay"></div>
+    <div class="stripes"></div>
+
+    <div class="wrapper">
+        <div class="top-bar">
+            <span class="icon">🚒</span>
+            <h1>Privacy</h1>
+            <span class="app-tag">Fire Truck Rescue Sim Games</span>
+        </div>
+
+        <p class="meta">Effective and last updated: March 2026</p>
+
+        <div class="block">
+            <h2>Our commitment</h2>
+            <p>Fire Truck Rescue Sim Games is an action and simulation game where you drive fire trucks and complete rescue missions. We are committed to transparency about how we handle information in connection with the game and this website. This document describes our privacy practices for the Fire Truck Rescue Sim Games app and related services.</p>
+        </div>
+
+        <div class="block">
+            <h2>Data we do not collect</h2>
+            <p>We do not collect personally identifiable information such as your name, email, phone number, or physical address. We do not collect device identifiers, advertising IDs, or IP addresses for the purpose of identifying you. We do not collect precise location or geolocation data. Gameplay data (scores, levels, session duration) is not collected or sent to our servers.</p>
+        </div>
+
+        <div class="block">
+            <h2>Local device storage</h2>
+            <p>Progress, settings, and in-app preferences (for example, sound toggles or unlocked trucks and levels) may be stored locally on your device. This information stays on your device and is not transmitted to us or to third parties. You can delete this data by uninstalling the app.</p>
+        </div>
+
+        <div class="block">
+            <h2>Third parties and links</h2>
+            <p>We do not integrate third-party analytics or advertising networks that collect your personal data. This site may link to external destinations (such as the App Store). Those destinations have their own privacy policies, which we do not control. We encourage you to read their policies when you leave our site.</p>
+        </div>
+
+        <div class="block">
+            <h2>Children and age</h2>
+            <p>Fire Truck Rescue Sim Games may be used by players of various ages. We do not knowingly collect personal information from anyone. Our approach is consistent with applicable privacy laws, including those that protect children’s information where relevant.</p>
+        </div>
+
+        <div class="block">
+            <h2>Changes to this policy</h2>
+            <p>We may update this Privacy document from time to time. The date at the top of this page will be revised when changes are made. Continued use of the game or this website after updates constitutes acceptance of the revised policy. We recommend checking this page periodically.</p>
+        </div>
+
+        <div class="block">
+            <h2>Get in touch</h2>
+            <p>For questions, feedback, or requests regarding this Privacy document or Fire Truck Rescue Sim Games:</p>
+            <div class="notice-box">
+                <div class="contact-row">
+                    <span>Developer:</span> <strong>GP Studio / Sana Aslam</strong>
+                </div>
+                <div class="contact-row">
+                    <span>Privacy policy (developer):</span>
+                    <a href="https://gsstudio4.wordpress.com/" target="_blank" rel="noopener noreferrer">gsstudio4.wordpress.com</a>
+                </div>
+            </div>
+            <p>We will respond to reasonable inquiries as soon as practicable.</p>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="nav-btn">← Back to game</a>
+        </div>
+    </div>
+</body>
+
+</html>

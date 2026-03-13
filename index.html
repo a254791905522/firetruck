@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Truck Rescue Sim Games – Firefighter Truck Simulator | 911 Rescue</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #1a0a0a 0%, #2d1515 25%, #4a1c1c 50%, #1a0a0a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes siren-pulse {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.35; }
+        }
+
+        @keyframes flame-flicker {
+            0%, 100% { transform: scale(1) translateY(0); opacity: 0.7; }
+            50% { transform: scale(1.05) translateY(-4px); opacity: 1; }
+        }
+
+        .bg-overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255, 69, 0, 0.12) 0%, transparent 60%);
+        }
+
+        .flame-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .flame-bg span {
+            position: absolute;
+            font-size: 32px;
+            animation: flame-flicker 3s ease-in-out infinite;
+        }
+
+        .flame-bg span:nth-child(1) { top: 12%; left: 8%; animation-delay: 0s; }
+        .flame-bg span:nth-child(2) { top: 65%; left: 88%; animation-delay: 0.8s; }
+        .flame-bg span:nth-child(3) { top: 35%; left: 78%; animation-delay: 0.4s; }
+        .flame-bg span:nth-child(4) { top: 78%; left: 10%; animation-delay: 1.2s; }
+        .flame-bg span:nth-child(5) { top: 22%; left: 50%; animation-delay: 0.2s; }
+        .flame-bg span:nth-child(6) { top: 55%; left: 45%; animation-delay: 0.6s; }
+
+        .container {
+            background: linear-gradient(165deg, rgba(45, 20, 20, 0.97) 0%, rgba(30, 12, 12, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 2px solid rgba(255, 69, 0, 0.25);
+            box-shadow: 0 20px 56px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(255, 100, 50, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            max-width: 700px;
+            width: 100%;
+            padding: 44px 40px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 28px 64px rgba(0, 0, 0, 0.55),
+                        0 0 40px rgba(255, 69, 0, 0.08);
+        }
+
+        .game-icon {
+            width: 116px;
+            height: 116px;
+            margin: 0 auto 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            background: linear-gradient(145deg, #c41e3a 0%, #8B0000 45%, #5c0000 100%);
+            border-radius: 24px;
+            box-shadow: 0 12px 36px rgba(196, 30, 58, 0.4),
+                        inset 0 2px 0 rgba(255, 200, 200, 0.2);
+            border: 2px solid rgba(255, 100, 100, 0.4);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .game-icon:hover {
+            transform: scale(1.08);
+        }
+
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            color: #fff;
+            font-size: 2.05em;
+            margin-bottom: 6px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        h1 .highlight {
+            color: #ff6b35;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .subtitle {
+            color: #e0a090;
+            font-size: 1.12em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .info-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0 24px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 69, 0, 0.15);
+            border: 1.5px solid rgba(255, 100, 50, 0.4);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.84em;
+            color: #ffb090;
+            font-weight: 600;
+        }
+
+        .description {
+            color: #d8c4c0;
+            line-height: 1.8;
+            font-size: 1.02em;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .description strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .features {
+            text-align: left;
+            margin-bottom: 28px;
+        }
+
+        .features h3 {
+            color: #fff;
+            margin-bottom: 14px;
+            font-size: 1.28em;
+            font-weight: 700;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.03em;
+        }
+
+        .features h3 span {
+            color: #ff6b35;
+        }
+
+        .features ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .features li {
+            color: #d8c4c0;
+            padding: 10px 0;
+            padding-left: 36px;
+            position: relative;
+            font-size: 0.98em;
+            line-height: 1.65;
+        }
+
+        .features li strong {
+            color: #ffe0d8;
+        }
+
+        .features li::before {
+            content: "🚒";
+            position: absolute;
+            left: 0;
+            font-size: 1.15em;
+        }
+
+        .features li:nth-child(2)::before { content: "🔥"; }
+        .features li:nth-child(3)::before { content: "🆘"; }
+        .features li:nth-child(4)::before { content: "🏢"; }
+        .features li:nth-child(5)::before { content: "👨‍🚒"; }
+        .features li:nth-child(6)::before { content: "📱"; }
+
+        .app-store-button {
+            display: inline-block;
+            background: linear-gradient(145deg, #e63946 0%, #c41e3a 50%, #8B0000 100%);
+            color: #fff;
+            padding: 14px 38px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 1.08em;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin-top: 6px;
+            border: 2px solid rgba(255, 150, 150, 0.35);
+            box-shadow: 0 8px 28px rgba(196, 30, 58, 0.4);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .app-store-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 36px rgba(255, 69, 0, 0.5);
+            color: #fff;
+        }
+
+        .app-store-button:active {
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            margin-top: 26px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 100, 50, 0.2);
+            font-size: 0.9em;
+            color: #a08078;
+        }
+
+        .footer a {
+            color: #ff8a70;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #ff6b35;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6em; }
+            .subtitle { font-size: 1em; }
+            .container { padding: 32px 22px; border-radius: 20px; }
+            .game-icon { width: 96px; height: 96px; font-size: 44px; border-radius: 20px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-overlay"></div>
+    <div class="flame-bg">
+        <span>🔥</span><span>🔥</span><span>🔥</span>
+        <span>🔥</span><span>🔥</span><span>🔥</span>
+    </div>
+
+    <div class="container">
+        <div class="game-icon">🚒</div>
+        <h1>Fire Truck <span class="highlight">Rescue Sim</span> Games</h1>
+        <p class="subtitle">Firefighter Truck Simulator</p>
+
+        <div class="info-badges">
+            <span class="badge">🆓 Free</span>
+            <span class="badge">🎮 Action & Simulation</span>
+            <span class="badge">📱 iPhone & iPad</span>
+            <span class="badge">🆘 911 Rescue</span>
+        </div>
+
+        <div class="description">
+            <p><strong>Answer the call. Drive the truck. Save the city.</strong> As a firefighter, respond to emergency calls and experience the thrill of realistic fireman rescue missions. In this action game you’ll answer 911 calls, drive powerful fire trucks, and tackle dangerous fires across the city. Reach the scene on time and rescue people trapped in burning buildings. Put out big fires in hospitals, shops, and banks—and use your fire extinguisher to stop smaller fires after car accidents. It’s your time to become the firefighter hero of the city.</p>
+        </div>
+
+        <div class="features">
+            <h3>Why <span>Play</span></h3>
+            <ul>
+                <li><strong>New missions every level</strong> – Each level brings a fresh rescue challenge.</li>
+                <li><strong>Unlock fire trucks</strong> – Complete missions and explore to unlock new vehicles.</li>
+                <li><strong>Rescue missions</strong> – Save people, put out fires, and take control of emergencies.</li>
+                <li><strong>Firefighter HQ</strong> – Lead your fire team, assign jobs, and upgrade gear for better rescues.</li>
+                <li><strong>Heroic challenges</strong> – Earn rewards, rise through the ranks, and become the ultimate firefighter hero.</li>
+                <li><strong>Play on iPhone & iPad</strong> – Full firefighter truck simulator experience on the go.</li>
+            </ul>
+        </div>
+
+        <a href="https://apps.apple.com/us/app/fire-truck-rescue-sim-games/id6651828315?uo=4" class="app-store-button" target="_blank" rel="noopener noreferrer">
+            Download on App Store
+        </a>
+
+        <div class="footer">
+            <p><a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; © Fire Truck Rescue Sim Games</p>
+        </div>
+    </div>
+</body>
+
+</html>
